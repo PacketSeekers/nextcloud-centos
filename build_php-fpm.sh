@@ -1,5 +1,11 @@
 #!/bin/bash
 
+DEBUG=false
+
+if [ "$1" == "debug" ]; then
+    DEBUG=true
+fi
+
 IMAGE_NAME="centos-php-fpm:latest"
 
 ctr=$(buildah from centos)
@@ -16,4 +22,9 @@ buildah config --author 'Jiri Konecny' $ctr
 buildah config --port 9000 $ctr
 buildah config --cmd '/opt/rh/rh-php70/root/sbin/php-fpm -F' $ctr
 
-buildah commit --rm $ctr $IMAGE_NAME
+if $DEBUG; then
+    echo $ctr
+else
+    buildah commit --rm $ctr $IMAGE_NAME
+    echo "$IMAGE_NAME"
+fi

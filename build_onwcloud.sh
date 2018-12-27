@@ -1,5 +1,11 @@
 #!/bin/bash
 
+DEBUG=false
+
+if [ "$1" == "debug" ]; then
+    DEBUG=true
+fi
+
 IMAGE_NAME="centos-owncloud:latest"
 
 ctr=$(buildah from centos)
@@ -33,4 +39,9 @@ buildah config --author 'Jiri Konecny' $ctr
 buildah config --port 8080 $ctr
 buildah config --cmd 'nginx -g "daemon off;"' $ctr
 
-buildah commit --rm $ctr $IMAGE_NAME
+if $DEBUG; then
+    echo $ctr
+else
+    buildah commit --rm $ctr $IMAGE_NAME
+    echo "$IMAGE_NAME"
+fi
